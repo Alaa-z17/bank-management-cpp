@@ -1150,6 +1150,14 @@ void ChangeAdminCredentials()
     cout << "\nEnter New Username: ";
     getline(cin >> ws, NewUsername);
 
+    while (UserExistsByUsername(NewUsername, UsersFileName)
+        && NewUsername != CurrentUser.UserName)
+    {
+        cout << "\nUsername [" << NewUsername
+            << "] already exists, Enter another: ";
+        getline(cin >> ws, NewUsername);
+    }
+
     cout << "Enter New Password: ";
     getline(cin, NewPassword);
 
