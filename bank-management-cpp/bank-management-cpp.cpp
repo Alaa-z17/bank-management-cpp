@@ -1105,7 +1105,7 @@ void ChangeAdminCredentials()
         cout << "\nAre you sure you want to change credentials? Y/N? ";
 		getline(cin >> ws, Answer);
 
-    } while (toupper(Answer[0]) != 'Y' || toupper(Answer[0]) != 'N' || Answer.length() != 1);
+    } while (toupper(Answer[0]) != 'Y' || toupper(Answer[0]) != 'N');
 
     if (toupper(Answer[0]) == 'N')
         return;
