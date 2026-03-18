@@ -523,8 +523,7 @@ bool FindUserByUsernameAndPassword(string Username,
         InitialUser.UserName = "Admin";
         InitialUser.Password = "1234";
         InitialUser.Permissions = -1;
-        AddDataLineToFile(UsersFileName,
-            ConvertUserRecordToLine(InitialUser));
+        AddDataLineToFile(UsersFileName, ConvertUserRecordToLine(InitialUser));
         vUsers = LoadUsersFromFile(UsersFileName);
     }
 
@@ -1228,7 +1227,7 @@ void PerformManageUsersMenuOption(enManageUsersMenuOptions Choice)
         }
         else
         {
-            SortUsersByUsername(vUsers, 0, vUsers.size() - 1);
+            SortUsersByUsername(vUsers, 0, (int)vUsers.size() - 1);
             SaveUsersToFile(UsersFileName, vUsers);
             cout << "\nUsers Sorted by Username A-Z Successfully!\n";
         }
@@ -1273,7 +1272,166 @@ void ShowManageUsersMenu()
    
     PerformManageUsersMenuOption((enManageUsersMenuOptions)Choice);
 }
+// =====================
+// Main Menu
+// =====================
+
+void PerformMainMenuOption(enMainMenuOptions Choice)
+{
+    switch (Choice)
+    {
+    case enMainMenuOptions::eListClients:
+        system("cls");
+        ShowAllClientsScreen();
+        GoBackToMainMenu();
+        break;
+
+    case enMainMenuOptions::eAddNewClient:
+        if (!CheckAccessPermission(enMainMenuPermissions::pAddNewClient))
+        {
+            ShowAccessDeniedMessage();
+            GoBackToMainMenu();
+            return;
+        }
+        system("cls");
+        AddNewClients();
+        GoBackToMainMenu();
+        break;
+
+    case enMainMenuOptions::eDeleteClient:
+    {
+        if (!CheckAccessPermission(enMainMenuPermissions::pDeleteClient))
+        {
+            ShowAccessDeniedMessage();
+            GoBackToMainMenu();
+            return;
+        }
+        system("cls");
+        vector<stClient> vClients = LoadClientsFromFile(ClientsFileName);
+        DeleteClientByAccountNumber(ReadClientAccountNumber(), vClients);
+        GoBackToMainMenu();
+        break;
+    }
+
+    case enMainMenuOptions::eUpdateClient:
+    {
+        if (!CheckAccessPermission(enMainMenuPermissions::pUpdateClients))
+        {
+            ShowAccessDeniedMessage();
+            GoBackToMainMenu();
+            return;
+        }
+        system("cls");
+        vector<stClient> vClients = LoadClientsFromFile(ClientsFileName);
+        UpdateClientByAccountNumber(ReadClientAccountNumber(), vClients);
+        GoBackToMainMenu();
+        break;
+    }
+
+    case enMainMenuOptions::eFindClient:
+    {
+        if (!CheckAccessPermission(enMainMenuPermissions::pFindClient))
+        {
+            ShowAccessDeniedMessage();
+            GoBackToMainMenu();
+            return;
+        }
+        system("cls");
+        vector<stClient> vClients = LoadClientsFromFile(ClientsFileName);
+        stClient Client;
+        string AccountNumber = ReadClientAccountNumber();
+        if (FindClientByAccountNumber(AccountNumber, vClients, Client))
+            PrintClientCard(Client);
+        else
+            cout << "\nClient [" << AccountNumber << "] Not Found!\n";
+        GoBackToMainMenu();
+        break;
+    }
+
+    case enMainMenuOptions::eShowTransactions:
+        system("cls");
+        ShowTransactionsMenu();
+        break;
+
+    case enMainMenuOptions::eManageUsers:
+        system("cls");
+        ShowManageUsersMenu();
+        break;
+
+    case enMainMenuOptions::eSortClientsByName:
+    {
+        system("cls");
+        vector<stClient> vClients = LoadClientsFromFile(ClientsFileName);
+        if (vClients.empty())
+        {
+            cout << "\nNo Clients to Sort!\n";
+        }
+        else
+        {
+            SortClientsByName(vClients, 0, (int)vClients.size() - 1);
+            SaveClientsToFile(ClientsFileName, vClients);
+            cout << "\nClients Sorted by Name A-Z Successfully!\n";
+        }
+        GoBackToMainMenu();
+        break;
+    }
+
+    case enMainMenuOptions::eSortClientsByAccNum:
+    {
+        system("cls");
+        vector<stClient> vClients = LoadClientsFromFile(ClientsFileName);
+        if (vClients.empty())
+        {
+            cout << "\nNo Clients to Sort!\n";
+        }
+        else
+        {
+            SortClientsByAccountNumber(vClients, 0, (int)vClients.size() - 1);
+            SaveClientsToFile(ClientsFileName, vClients);
+            cout << "\nClients Sorted by Account Number Successfully!\n";
+        }
+        GoBackToMainMenu();
+        break;
+    }
+
+    case enMainMenuOptions::eLogout:
+        system("cls");
+        Login();
+        break;
+    }
+}
+
+void ShowMainMenu()
+{
+    system("cls");
+    cout << "===========================================\n";
+    cout << "\t  Bank Management System\n";
+    cout << "\t  Welcome, " << CurrentUser.UserName << "\n";
+    cout << "===========================================\n";
+    cout << "\t[1]  List Clients\n";
+    cout << "\t[2]  Add New Client\n";
+    cout << "\t[3]  Delete Client\n";
+    cout << "\t[4]  Update Client\n";
+    cout << "\t[5]  Find Client\n";
+    cout << "\t[6]  Transactions\n";
+    cout << "\t[7]  Manage Users\n";
+    cout << "\t[8]  Sort Clients by Name A-Z\n";
+    cout << "\t[9]  Sort Clients by Account Number\n";
+    cout << "\t[10] Logout\n";
+    cout << "===========================================\n";
+
+    short Choice = 0;
+    do
+    {
+        cout << "Choose [1-10]: ";
+        cin >> Choice;
+    } while (Choice < 1 || Choice > 10);
+
+    PerformMainMenuOption((enMainMenuOptions)Choice);
+}
+
 int main()
 {
+    Login();
     return 0;
 }
