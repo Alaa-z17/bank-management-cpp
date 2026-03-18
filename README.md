@@ -5,6 +5,12 @@ advanced concepts of **Functional & Procedural Programming**.
 
 ---
 
+## 🎬 Video Walkthrough
+
+[![Bank Management System in C++](https://img.youtube.com/vi/LGK9aZJ4soo/0.jpg)](https://youtu.be/LGK9aZJ4soo)
+
+> Click the image above to watch the full project walkthrough on YouTube.
+
 ## 🎯 Learning Objectives
 
 - Multi-level menu navigation
