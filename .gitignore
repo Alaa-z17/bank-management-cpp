@@ -1,0 +1,9 @@
+.vs/
+x64/
+x86/
+Debug/
+Release/
+*.user
+*.vcxproj.user
+Clients.txt
+Users.txt
