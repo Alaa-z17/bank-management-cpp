@@ -1078,6 +1078,201 @@ void SortUsersByUsername(vector<stUser>& vUsers,
     SortUsersByUsername(vUsers, Mid + 1, Right);
     MergeUsersByUsername(vUsers, Left, Mid, Right);
 }
+// =====================
+// Navigation Functions
+// =====================
+
+void GoBackToMainMenu()
+{
+    cout << "\n\nPress any key to go back to Main Menu...";
+    system("pause>0");
+    ShowMainMenu();
+}
+
+void GoBackToTransactionsMenu()
+{
+    cout << "\n\nPress any key to go back to Transactions Menu...";
+    system("pause>0");
+    ShowTransactionsMenu();
+}
+
+void GoBackToManageUsersMenu()
+{
+    cout << "\n\nPress any key to go back to Manage Users Menu...";
+    system("pause>0");
+    ShowManageUsersMenu();
+}
+
+// =====================
+// Transactions Menu
+// =====================
+
+void PerformTransactionsMenuOption(
+    enTransactionsMenuOptions Choice)
+{
+    switch (Choice)
+    {
+    case enTransactionsMenuOptions::eDeposit:
+        system("cls");
+        ShowDepositScreen();
+        GoBackToTransactionsMenu();
+        break;
+
+    case enTransactionsMenuOptions::eWithdraw:
+        system("cls");
+        ShowWithdrawScreen();
+        GoBackToTransactionsMenu();
+        break;
+
+    case enTransactionsMenuOptions::eShowTotalBalance:
+        system("cls");
+        ShowTotalBalances();
+        GoBackToTransactionsMenu();
+        break;
+
+    case enTransactionsMenuOptions::eShowMainMenu:
+        ShowMainMenu();
+        break;
+    }
+}
+
+void ShowTransactionsMenu()
+{
+    if (!CheckAccessPermission(enMainMenuPermissions::pTransactions))
+    {
+        ShowAccessDeniedMessage();
+        GoBackToMainMenu();
+        return;
+    }
+
+    system("cls");
+    cout << "===========================================\n";
+    cout << "\t\tTransactions Menu\n";
+    cout << "===========================================\n";
+    cout << "\t[1] Deposit\n";
+    cout << "\t[2] Withdraw\n";
+    cout << "\t[3] Total Balances\n";
+    cout << "\t[4] Main Menu\n";
+    cout << "===========================================\n";
+   
+    short Choice = 0;
+    do
+    {
+        cout << "Choose [1-4]: ";
+        cin >> Choice;
+
+	} while (Choice < 1 || Choice > 4);
+ 
+    PerformTransactionsMenuOption((enTransactionsMenuOptions)Choice);
+}
+
+// =====================
+// Manage Users Menu
+// =====================
+
+void PerformManageUsersMenuOption(enManageUsersMenuOptions Choice)
+{
+    switch (Choice)
+    {
+    case enManageUsersMenuOptions::eListUsers:
+        system("cls");
+        ShowAllUsersScreen();
+        GoBackToManageUsersMenu();
+        break;
+
+    case enManageUsersMenuOptions::eAddNewUser:
+        system("cls");
+        AddNewUsers();
+        GoBackToManageUsersMenu();
+        break;
+
+    case enManageUsersMenuOptions::eDeleteUser:
+    {
+        system("cls");
+        vector<stUser> vUsers = LoadUsersFromFile(UsersFileName);
+        DeleteUserByUsername(ReadUsername(), vUsers);
+        GoBackToManageUsersMenu();
+        break;
+    }
+
+    case enManageUsersMenuOptions::eUpdateUser:
+    {
+        system("cls");
+        vector<stUser> vUsers = LoadUsersFromFile(UsersFileName);
+        UpdateUserByUsername(ReadUsername(), vUsers);
+        GoBackToManageUsersMenu();
+        break;
+    }
+
+    case enManageUsersMenuOptions::eFindUser:
+    {
+        system("cls");
+        vector<stUser> vUsers = LoadUsersFromFile(UsersFileName);
+        stUser User;
+        string Username = ReadUsername();
+        if (FindUserByUsername(Username, vUsers, User))
+            PrintUserCard(User);
+        else
+            cout << "\nUser [" << Username << "] Not Found!\n";
+        GoBackToManageUsersMenu();
+        break;
+    }
+
+    case enManageUsersMenuOptions::eSortUsers:
+    {
+        system("cls");
+        vector<stUser> vUsers = LoadUsersFromFile(UsersFileName);
+        if (vUsers.empty())
+        {
+            cout << "\nNo Users to Sort!\n";
+        }
+        else
+        {
+            SortUsersByUsername(vUsers, 0, vUsers.size() - 1);
+            SaveUsersToFile(UsersFileName, vUsers);
+            cout << "\nUsers Sorted by Username A-Z Successfully!\n";
+        }
+        GoBackToManageUsersMenu();
+        break;
+    }
+
+    case enManageUsersMenuOptions::eUsersMainMenu:
+        ShowMainMenu();
+        break;
+    }
+}
+
+void ShowManageUsersMenu()
+{
+    if (!CheckAccessPermission(enMainMenuPermissions::pManageUsers))
+    {
+        ShowAccessDeniedMessage();
+        GoBackToMainMenu();
+        return;
+    }
+
+    system("cls");
+    cout << "===========================================\n";
+    cout << "\t\tManage Users Menu\n";
+    cout << "===========================================\n";
+    cout << "\t[1] List Users\n";
+    cout << "\t[2] Add New User\n";
+    cout << "\t[3] Delete User\n";
+    cout << "\t[4] Update User\n";
+    cout << "\t[5] Find User\n";
+    cout << "\t[6] Sort Users A-Z\n";
+    cout << "\t[7] Main Menu\n";
+    cout << "===========================================\n";
+
+    short Choice = 0;
+    do
+    {
+        cout << "Choose [1-7]: ";
+        cin >> Choice;
+	} while (Choice < 1 || Choice > 7);
+   
+    PerformManageUsersMenuOption((enManageUsersMenuOptions)Choice);
+}
 int main()
 {
     return 0;
