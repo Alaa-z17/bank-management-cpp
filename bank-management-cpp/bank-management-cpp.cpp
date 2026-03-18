@@ -769,6 +769,125 @@ void ShowAllUsersScreen()
 
     cout << "\n" << string(75, '_') << "\n";
 }
+// =====================
+// Transaction Functions
+// =====================
+
+void PrintClientBalanceLine(stClient Client)
+{
+    cout << "| " << left << setw(15) << Client.AccountNumber;
+    cout << "| " << left << setw(40) << Client.Name;
+    cout << "| " << left << setw(12) << Client.AccountBalance;
+}
+
+void ShowTotalBalances()
+{
+    vector<stClient> vClients = LoadClientsFromFile(ClientsFileName);
+
+    cout << "\n\t\t\tBalances List (" << vClients.size() << ") Client(s).\n";
+    cout << string(75, '_') << "\n\n";
+    cout << "| " << left << setw(15) << "Account Number";
+    cout << "| " << left << setw(40) << "Client Name";
+    cout << "| " << left << setw(12) << "Balance";
+    cout << "\n" << string(75, '_') << "\n\n";
+
+    double TotalBalances = 0;
+
+    if (vClients.empty())
+        cout << "\t\t\tNo Clients Available!\n";
+    else
+        for (stClient& C : vClients)
+        {
+            PrintClientBalanceLine(C);
+            TotalBalances += C.AccountBalance;
+            cout << "\n";
+        }
+
+    cout << "\n" << string(75, '_') << "\n";
+    cout << "\t\t\tTotal Balances = " << TotalBalances << "\n";
+}
+
+bool DepositToClient(string AccountNumber, double Amount,
+    vector<stClient>& vClients)
+{
+    char Answer = 'N';
+    cout << "\nAre you sure you want to perform this transaction? Y/N? ";
+    cin >> Answer;
+
+    if (toupper(Answer) == 'Y')
+    {
+        for (stClient& C : vClients)
+        {
+            if (C.AccountNumber == AccountNumber)
+            {
+                C.AccountBalance += Amount;
+                SaveClientsToFile(ClientsFileName, vClients);
+                cout << "\nDone! New Balance: " << C.AccountBalance << "\n";
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void ShowDepositScreen()
+{
+    cout << "\n-----------------------------------\n";
+    cout << "\tDeposit Screen\n";
+    cout << "-----------------------------------\n";
+
+    vector<stClient> vClients = LoadClientsFromFile(ClientsFileName);
+    stClient Client;
+
+    string AccountNumber = ReadClientAccountNumber();
+    while (!FindClientByAccountNumber(AccountNumber, vClients, Client))
+    {
+        cout << "\nClient [" << AccountNumber << "] not found!\n";
+        AccountNumber = ReadClientAccountNumber();
+    }
+
+    PrintClientCard(Client);
+
+    double Amount = 0;
+    cout << "\nEnter Deposit Amount: ";
+    cin >> Amount;
+
+    DepositToClient(AccountNumber, Amount, vClients);
+}
+
+void ShowWithdrawScreen()
+{
+    cout << "\n-----------------------------------\n";
+    cout << "\tWithdraw Screen\n";
+    cout << "-----------------------------------\n";
+
+    vector<stClient> vClients = LoadClientsFromFile(ClientsFileName);
+    stClient Client;
+
+    string AccountNumber = ReadClientAccountNumber();
+    while (!FindClientByAccountNumber(AccountNumber, vClients, Client))
+    {
+        cout << "\nClient [" << AccountNumber << "] not found!\n";
+        AccountNumber = ReadClientAccountNumber();
+    }
+
+    PrintClientCard(Client);
+
+    double Amount = 0;
+    cout << "\nEnter Withdraw Amount: ";
+    cin >> Amount;
+
+    while (Amount > Client.AccountBalance)
+    {
+        cout << "\nAmount exceeds balance!"
+            << "\nMax withdrawal: " << Client.AccountBalance
+            << "\nEnter amount (0 to cancel): ";
+        cin >> Amount;
+    }
+
+    if (Amount > 0)
+        DepositToClient(AccountNumber, Amount * -1, vClients);
+}
 int main()
 {
     return 0;
