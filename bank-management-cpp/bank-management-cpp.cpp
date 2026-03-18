@@ -254,6 +254,235 @@ void SaveUsersToFile(string FileName, vector<stUser>& vUsers)
         MyFile.close();
     }
 }
+// =====================
+// Client Helper Functions
+// =====================
+
+bool ClientExistsByAccountNumber(string AccountNumber,
+    string FileName)
+{
+    vector<stClient> vClients = LoadClientsFromFile(FileName);
+    for (stClient& C : vClients)
+    {
+        if (C.AccountNumber == AccountNumber)
+            return true;
+    }
+    return false;
+}
+
+bool FindClientByAccountNumber(string AccountNumber,
+    vector<stClient>& vClients, stClient& Client)
+{
+    for (stClient& C : vClients)
+    {
+        if (C.AccountNumber == AccountNumber)
+        {
+            Client = C;
+            return true;
+        }
+    }
+    return false;
+}
+
+void PrintClientCard(stClient Client)
+{
+    cout << "\n-----------------------------------\n";
+    cout << "Account Number : " << Client.AccountNumber << "\n";
+    cout << "Pin Code       : " << Client.PinCode << "\n";
+    cout << "Name           : " << Client.Name << "\n";
+    cout << "Phone          : " << Client.Phone << "\n";
+    cout << "Balance        : " << Client.AccountBalance << "\n";
+    cout << "-----------------------------------\n";
+}
+
+void PrintClientRecordLine(stClient Client)
+{
+    cout << "| " << left << setw(15) << Client.AccountNumber;
+    cout << "| " << left << setw(10) << Client.PinCode;
+    cout << "| " << left << setw(40) << Client.Name;
+    cout << "| " << left << setw(12) << Client.Phone;
+    cout << "| " << left << setw(12) << Client.AccountBalance;
+}
+
+string ReadClientAccountNumber()
+{
+    string AccountNumber = "";
+    cout << "\nEnter Account Number: ";
+    cin >> AccountNumber;
+    return AccountNumber;
+}
+
+stClient ReadNewClient()
+{
+    stClient Client;
+
+    cout << "Enter Account Number: ";
+    getline(cin >> ws, Client.AccountNumber);
+
+    while (ClientExistsByAccountNumber(Client.AccountNumber,
+        ClientsFileName))
+    {
+        cout << "\nAccount [" << Client.AccountNumber
+            << "] already exists, Enter another: ";
+        getline(cin >> ws, Client.AccountNumber);
+    }
+
+    cout << "Enter Pin Code: ";
+    getline(cin, Client.PinCode);
+
+    cout << "Enter Name: ";
+    getline(cin, Client.Name);
+
+    cout << "Enter Phone: ";
+    getline(cin, Client.Phone);
+
+    cout << "Enter Account Balance: ";
+    cin >> Client.AccountBalance;
+
+    return Client;
+}
+
+stClient ChangeClientRecord(string AccountNumber)
+{
+    stClient Client;
+    Client.AccountNumber = AccountNumber;
+
+    cout << "Enter Pin Code: ";
+    getline(cin >> ws, Client.PinCode);
+
+    cout << "Enter Name: ";
+    getline(cin, Client.Name);
+
+    cout << "Enter Phone: ";
+    getline(cin, Client.Phone);
+
+    cout << "Enter Account Balance: ";
+    cin >> Client.AccountBalance;
+
+    return Client;
+}
+
+bool MarkClientForDelete(string AccountNumber,
+    vector<stClient>& vClients)
+{
+    for (stClient& C : vClients)
+    {
+        if (C.AccountNumber == AccountNumber)
+        {
+            C.MarkForDelete = true;
+            return true;
+        }
+    }
+    return false;
+}
+
+void AddNewClient()
+{
+    stClient Client = ReadNewClient();
+    AddDataLineToFile(ClientsFileName,ConvertClientRecordToLine(Client));
+    cout << "\nClient Added Successfully!\n";
+}
+
+void AddNewClients()
+{
+    char AddMore = 'Y';
+    do
+    {
+        cout << "\nAdding New Client:\n";
+        AddNewClient();
+        cout << "\nAdd more clients? Y/N? ";
+        cin >> AddMore;
+    } while (toupper(AddMore) == 'Y');
+}
+
+bool DeleteClientByAccountNumber(string AccountNumber,
+    vector<stClient>& vClients)
+{
+    stClient Client;
+    char Answer = 'N';
+
+    if (FindClientByAccountNumber(AccountNumber, vClients, Client))
+    {
+        PrintClientCard(Client);
+        cout << "\nAre you sure you want to delete? Y/N? ";
+        cin >> Answer;
+        if (toupper(Answer) == 'Y')
+        {
+            MarkClientForDelete(AccountNumber, vClients);
+            SaveClientsToFile(ClientsFileName, vClients);
+            vClients = LoadClientsFromFile(ClientsFileName);
+            cout << "\nClient Deleted Successfully!\n";
+            return true;
+        }
+    }
+    else
+        cout << "\nClient [" << AccountNumber << "] Not Found!\n";
+
+    return false;
+}
+
+bool UpdateClientByAccountNumber(string AccountNumber,
+    vector<stClient>& vClients)
+{
+    stClient Client;
+    char Answer = 'N';
+
+    if (FindClientByAccountNumber(AccountNumber, vClients, Client))
+    {
+        PrintClientCard(Client);
+        cout << "\nAre you sure you want to update? Y/N? ";
+        cin >> Answer;
+        if (toupper(Answer) == 'Y')
+        {
+            for (stClient& C : vClients)
+            {
+                if (C.AccountNumber == AccountNumber)
+                {
+                    C = ChangeClientRecord(AccountNumber);
+                    break;
+                }
+            }
+            SaveClientsToFile(ClientsFileName, vClients);
+            cout << "\nClient Updated Successfully!\n";
+            return true;
+        }
+    }
+    else
+        cout << "\nClient [" << AccountNumber << "] Not Found!\n";
+
+    return false;
+}
+
+void ShowAllClientsScreen()
+{
+    if (!CheckAccessPermission(enMainMenuPermissions::pListClients))
+    {
+        cout << "\nAccess Denied!\n";
+        return;
+    }
+
+    vector<stClient> vClients = LoadClientsFromFile(ClientsFileName);
+
+    cout << "\n\t\t\tClient List (" << vClients.size() << ") Client(s).\n";
+    cout << string(95, '_') << "\n\n";
+    cout << "| " << left << setw(15) << "Account Number";
+    cout << "| " << left << setw(10) << "Pin Code";
+    cout << "| " << left << setw(40) << "Client Name";
+    cout << "| " << left << setw(12) << "Phone";
+    cout << "| " << left << setw(12) << "Balance";
+    cout << "\n" << string(95, '_') << "\n\n";
+
+    if (vClients.empty())
+        cout << "\t\t\tNo Clients Available!\n";
+    else
+        for (stClient& C : vClients)
+        {
+            PrintClientRecordLine(C);
+            cout << "\n";
+        }
+
+    cout << "\n" << string(95, '_') << "\n";
+}
 
 int main()
 {
