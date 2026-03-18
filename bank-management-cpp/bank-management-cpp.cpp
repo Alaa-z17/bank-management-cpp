@@ -25,7 +25,8 @@ enum enManageUsersMenuOptions
     eUpdateUser = 4,
     eFindUser = 5,
     eSortUsers = 6,
-    eUsersMainMenu = 7
+    eChangeAdminCreds = 7,
+    eUsersMainMenu = 8
 };
 
 enum enMainMenuOptions
@@ -1077,6 +1078,57 @@ void SortUsersByUsername(vector<stUser>& vUsers,
     SortUsersByUsername(vUsers, Mid + 1, Right);
     MergeUsersByUsername(vUsers, Left, Mid, Right);
 }
+
+void ChangeAdminCredentials()
+{
+    if (CurrentUser.UserName != "Admin" && CurrentUser.Password != "1234")
+    {
+        cout <<"\nWrong Credentials !"
+             << "\nOnly Admin can change these credentials!\n";
+        return;
+    }
+
+    vector<stUser> vUsers = LoadUsersFromFile(UsersFileName);
+    char Answer = 'N';
+
+    cout << "\n-----------------------------------\n";
+    cout << "\tChange Admin Credentials\n";
+    cout << "-----------------------------------\n";
+    cout << "Current Username : " << CurrentUser.UserName << "\n";
+    cout << "Current Password : " << CurrentUser.Password << "\n";
+    cout << "-----------------------------------\n";
+
+    cout << "\nAre you sure you want to change credentials? Y/N? ";
+    cin >> Answer;
+
+    if (toupper(Answer) != 'Y')
+        return;
+
+    string NewUsername = "";
+    string NewPassword = "";
+
+    cout << "\nEnter New Username: ";
+    getline(cin >> ws, NewUsername);
+
+    cout << "Enter New Password: ";
+    getline(cin, NewPassword);
+
+    for (stUser& U : vUsers)
+    {
+        if (U.UserName == CurrentUser.UserName && U.Password == CurrentUser.Password)
+        {
+            U.UserName = NewUsername;
+            U.Password = NewPassword;
+            CurrentUser = U;
+            break;
+        }
+    }
+
+    SaveUsersToFile(UsersFileName, vUsers);
+    cout << "\nCredentials Updated Successfully!\n";
+    cout << "New Username: " << CurrentUser.UserName << "\n";
+}
+
 // =====================
 // Navigation Functions
 // =====================
@@ -1234,7 +1286,11 @@ void PerformManageUsersMenuOption(enManageUsersMenuOptions Choice)
         GoBackToManageUsersMenu();
         break;
     }
-
+    case enManageUsersMenuOptions::eChangeAdminCreds:
+        system("cls");
+        ChangeAdminCredentials();
+        GoBackToManageUsersMenu();
+        break;
     case enManageUsersMenuOptions::eUsersMainMenu:
         ShowMainMenu();
         break;
@@ -1260,15 +1316,16 @@ void ShowManageUsersMenu()
     cout << "\t[4] Update User\n";
     cout << "\t[5] Find User\n";
     cout << "\t[6] Sort Users A-Z\n";
-    cout << "\t[7] Main Menu\n";
+    cout << "\t[7] Change Admin Credentials\n";
+    cout << "\t[8] Main Menu\n";
     cout << "===========================================\n";
 
     short Choice = 0;
     do
     {
-        cout << "Choose [1-7]: ";
+        cout << "Choose [1-8]: ";
         cin >> Choice;
-	} while (Choice < 1 || Choice > 7);
+	} while (Choice < 1 || Choice > 8);
    
     PerformManageUsersMenuOption((enManageUsersMenuOptions)Choice);
 }
