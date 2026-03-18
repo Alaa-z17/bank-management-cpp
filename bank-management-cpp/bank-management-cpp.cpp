@@ -946,6 +946,138 @@ void Login()
 
     ShowMainMenu();
 }
+// =====================
+// Sort Functions
+// =====================
+
+void MergeClientsByName(vector<stClient>& vClients,
+    int Left, int Mid, int Right)
+{
+    int LeftSize = Mid - Left + 1;
+    int RightSize = Right - Mid;
+
+    vector<stClient> vLeft(LeftSize);
+    vector<stClient> vRight(RightSize);
+
+    for (int i = 0; i < LeftSize; i++)
+        vLeft[i] = vClients[Left + i];
+    for (int i = 0; i < RightSize; i++)
+        vRight[i] = vClients[Mid + 1 + i];
+
+    int i = 0, j = 0, k = Left;
+    while (i < LeftSize && j < RightSize)
+    {
+        if (vLeft[i].Name <= vRight[j].Name)
+            vClients[k++] = vLeft[i++];
+        else
+            vClients[k++] = vRight[j++];
+    }
+    while (i < LeftSize)  vClients[k++] = vLeft[i++];
+    while (j < RightSize) vClients[k++] = vRight[j++];
+}
+
+/**
+ * @brief Sorts clients alphabetically by Name.
+ * Recursive — calls itself on left and right halves.
+ * Base case: Left >= Right (single element, already sorted).
+ */
+void SortClientsByName(vector<stClient>& vClients,
+    int Left, int Right)
+{
+    if (Left >= Right) return;
+
+    int Mid = Left + (Right - Left) / 2;
+
+    SortClientsByName(vClients, Left, Mid);
+    SortClientsByName(vClients, Mid + 1, Right);
+    MergeClientsByName(vClients, Left, Mid, Right);
+}
+
+void MergeClientsByAccountNumber(vector<stClient>& vClients,
+    int Left, int Mid, int Right)
+{
+    int LeftSize = Mid - Left + 1;
+    int RightSize = Right - Mid;
+
+    vector<stClient> vLeft(LeftSize);
+    vector<stClient> vRight(RightSize);
+
+    for (int i = 0; i < LeftSize; i++)
+        vLeft[i] = vClients[Left + i];
+    for (int i = 0; i < RightSize; i++)
+        vRight[i] = vClients[Mid + 1 + i];
+
+    int i = 0, j = 0, k = Left;
+    while (i < LeftSize && j < RightSize)
+    {
+        if (vLeft[i].AccountNumber <= vRight[j].AccountNumber)
+            vClients[k++] = vLeft[i++];
+        else
+            vClients[k++] = vRight[j++];
+    }
+    while (i < LeftSize)  vClients[k++] = vLeft[i++];
+    while (j < RightSize) vClients[k++] = vRight[j++];
+}
+
+/**
+ * @brief Sorts clients by Account Number.
+ * Recursive — calls itself on left and right halves.
+ * Base case: Left >= Right (single element, already sorted).
+ */
+void SortClientsByAccountNumber(vector<stClient>& vClients,
+    int Left, int Right)
+{
+    if (Left >= Right) return;
+
+    int Mid = Left + (Right - Left) / 2;
+
+    SortClientsByAccountNumber(vClients, Left, Mid);
+    SortClientsByAccountNumber(vClients, Mid + 1, Right);
+    MergeClientsByAccountNumber(vClients, Left, Mid, Right);
+}
+
+void MergeUsersByUsername(vector<stUser>& vUsers,
+    int Left, int Mid, int Right)
+{
+    int LeftSize = Mid - Left + 1;
+    int RightSize = Right - Mid;
+
+    vector<stUser> vLeft(LeftSize);
+    vector<stUser> vRight(RightSize);
+
+    for (int i = 0; i < LeftSize; i++)
+        vLeft[i] = vUsers[Left + i];
+    for (int i = 0; i < RightSize; i++)
+        vRight[i] = vUsers[Mid + 1 + i];
+
+    int i = 0, j = 0, k = Left;
+    while (i < LeftSize && j < RightSize)
+    {
+        if (vLeft[i].UserName <= vRight[j].UserName)
+            vUsers[k++] = vLeft[i++];
+        else
+            vUsers[k++] = vRight[j++];
+    }
+    while (i < LeftSize)  vUsers[k++] = vLeft[i++];
+    while (j < RightSize) vUsers[k++] = vRight[j++];
+}
+
+/**
+ * @brief Sorts users alphabetically by Username.
+ * Recursive — calls itself on left and right halves.
+ * Base case: Left >= Right (single element, already sorted).
+ */
+void SortUsersByUsername(vector<stUser>& vUsers,
+    int Left, int Right)
+{
+    if (Left >= Right) return;
+
+    int Mid = Left + (Right - Left) / 2;
+
+    SortUsersByUsername(vUsers, Left, Mid);
+    SortUsersByUsername(vUsers, Mid + 1, Right);
+    MergeUsersByUsername(vUsers, Left, Mid, Right);
+}
 int main()
 {
     return 0;
