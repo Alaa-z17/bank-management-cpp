@@ -1131,7 +1131,7 @@ void ChangeAdminCredentials()
     cout << "\tChange Admin Credentials\n";
     cout << "-----------------------------------\n";
     cout << "Current Username : " << CurrentUser.UserName << "\n";
-    cout << "Current Password : " << CurrentUser.Password << "\n";
+    cout << "Current Password : " << string(CurrentUser.Password.length(), '*') << "\n";
     cout << "-----------------------------------\n";
 
     do 
