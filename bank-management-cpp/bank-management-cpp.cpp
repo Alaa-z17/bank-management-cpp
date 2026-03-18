@@ -1091,7 +1091,7 @@ void ChangeAdminCredentials()
     }
 
     vector<stUser> vUsers = LoadUsersFromFile(UsersFileName);
-    char Answer = 'N';
+    string Answer = "N";
 
     cout << "\n-----------------------------------\n";
     cout << "\tChange Admin Credentials\n";
@@ -1103,10 +1103,11 @@ void ChangeAdminCredentials()
     do 
     {
         cout << "\nAre you sure you want to change credentials? Y/N? ";
-        cin >> Answer;
-    } while (toupper(Answer) != 'Y' || toupper(Answer) != 'N');
+		getline(cin >> ws, Answer);
 
-    if (toupper(Answer) == 'N')
+    } while (toupper(Answer[0]) != 'Y' || toupper(Answer[0]) != 'N' || Answer.length() != 1);
+
+    if (toupper(Answer[0]) == 'N')
         return;
     
     string NewUsername = "";
