@@ -1,20 +1,90 @@
-// bank-management-cpp.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<vector>
+#include<iomanip>
+using namespace std;
 
-#include <iostream>
+// =====================
+// Enums
+// =====================
+
+enum enTransactionsMenuOptions
+{
+    eDeposit = 1,
+    eWithdraw = 2,
+    eShowTotalBalance = 3,
+    eShowMainMenu = 4
+};
+
+enum enManageUsersMenuOptions
+{
+    eListUsers = 1,
+    eAddNewUser = 2,
+    eDeleteUser = 3,
+    eUpdateUser = 4,
+    eFindUser = 5,
+    eSortUsers = 6,
+    eUsersMainMenu = 7
+};
+
+enum enMainMenuOptions
+{
+    eListClients = 1,
+    eAddNewClient = 2,
+    eDeleteClient = 3,
+    eUpdateClient = 4,
+    eFindClient = 5,
+    eShowTransactions = 6,
+    eManageUsers = 7,
+    eSortClientsByName = 8,
+    eSortClientsByAccNum = 9,
+    eLogout = 10
+};
+
+enum enMainMenuPermissions
+{
+    eAll = -1,
+    pListClients = 1,
+    pAddNewClient = 2,
+    pDeleteClient = 4,
+    pUpdateClients = 8,
+    pFindClient = 16,
+    pTransactions = 32,
+    pManageUsers = 64
+};
+
+// =====================
+// Structs
+// =====================
+
+struct stClient
+{
+    string AccountNumber = "";
+    string PinCode = "";
+    string Name = "";
+    string Phone = "";
+    double AccountBalance = 0;
+    bool MarkForDelete = false;
+};
+
+struct stUser
+{
+    string UserName = "";
+    string Password = "";
+    int Permissions = 0;
+    bool MarkForDelete = false;
+};
+
+// =====================
+// Global Variables
+// =====================
+
+const string ClientsFileName = "Clients.txt";
+const string UsersFileName = "Users.txt";
+stUser CurrentUser;
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
