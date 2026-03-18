@@ -888,6 +888,64 @@ void ShowWithdrawScreen()
     if (Amount > 0)
         DepositToClient(AccountNumber, Amount * -1, vClients);
 }
+// =====================
+// Permission System
+// =====================
+
+bool CheckAccessPermission(enMainMenuPermissions Permission)
+{
+    if (CurrentUser.Permissions == enMainMenuPermissions::eAll)
+        return true;
+
+    return (Permission & CurrentUser.Permissions) == Permission;
+}
+
+void ShowAccessDeniedMessage()
+{
+    cout << "\n------------------------------------\n";
+    cout << "Access Denied!\n";
+    cout << "You don't have permission to do this.\n";
+    cout << "Please contact your Admin.\n";
+    cout << "------------------------------------\n";
+}
+
+bool LoadUserInfo(string Username, string Password)
+{
+    return FindUserByUsernameAndPassword(Username,
+        Password, CurrentUser);
+}
+
+// =====================
+// Login
+// =====================
+
+void Login()
+{
+    bool LoginFailed = false;
+    string Username, Password;
+
+    do
+    {
+        system("cls");
+        cout << "\n---------------------------------\n";
+        cout << "\t   Login Screen\n";
+        cout << "---------------------------------\n";
+
+        if (LoginFailed)
+            cout << "Invalid Username or Password!\n\n";
+
+        cout << "Enter Username: ";
+        cin >> Username;
+
+        cout << "Enter Password: ";
+        cin >> Password;
+
+        LoginFailed = !LoadUserInfo(Username, Password);
+
+    } while (LoginFailed);
+
+    ShowMainMenu();
+}
 int main()
 {
     return 0;
