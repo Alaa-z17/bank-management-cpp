@@ -1081,7 +1081,9 @@ void SortUsersByUsername(vector<stUser>& vUsers,
 
 void ChangeAdminCredentials()
 {
-    if (CurrentUser.UserName != "Admin" && CurrentUser.Password != "1234")
+	static string currentUserName = CurrentUser.UserName, currentPassword = CurrentUser.Password;
+
+    if (CurrentUser.UserName != currentUserName && CurrentUser.Password != currentPassword)
     {
         cout <<"\nWrong Credentials !"
              << "\nOnly Admin can change these credentials!\n";
@@ -1098,12 +1100,15 @@ void ChangeAdminCredentials()
     cout << "Current Password : " << CurrentUser.Password << "\n";
     cout << "-----------------------------------\n";
 
-    cout << "\nAre you sure you want to change credentials? Y/N? ";
-    cin >> Answer;
+    do 
+    {
+        cout << "\nAre you sure you want to change credentials? Y/N? ";
+        cin >> Answer;
+    } while (toupper(Answer) != 'Y' || toupper(Answer) != 'N');
 
-    if (toupper(Answer) != 'Y')
+    if (toupper(Answer) == 'N')
         return;
-
+    
     string NewUsername = "";
     string NewPassword = "";
 
@@ -1120,6 +1125,9 @@ void ChangeAdminCredentials()
             U.UserName = NewUsername;
             U.Password = NewPassword;
             CurrentUser = U;
+
+			currentUserName = NewUsername;
+			currentPassword = NewPassword;
             break;
         }
     }
