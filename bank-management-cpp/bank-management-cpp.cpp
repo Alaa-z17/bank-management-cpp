@@ -1081,6 +1081,7 @@ void SortUsersByUsername(vector<stUser>& vUsers,
 
 void ChangeAdminCredentials()
 {
+    //here fixed a logical problem
 	static string currentUserName = CurrentUser.UserName, currentPassword = CurrentUser.Password;
 
     if (CurrentUser.UserName != currentUserName && CurrentUser.Password != currentPassword)
@@ -1105,7 +1106,7 @@ void ChangeAdminCredentials()
         cout << "\nAre you sure you want to change credentials? Y/N? ";
 		getline(cin >> ws, Answer);
 
-    } while (toupper(Answer[0]) != 'Y' || toupper(Answer[0]) != 'N');
+    } while (toupper(Answer[0]) != 'Y' && toupper(Answer[0]) != 'N');
 
     if (toupper(Answer[0]) == 'N')
         return;
