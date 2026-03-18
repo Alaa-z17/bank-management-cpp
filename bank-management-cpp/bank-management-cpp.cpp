@@ -119,6 +119,39 @@ vector<string> SplitString(string S1, string Delim)
     return vString;
 }
 
+
+// =====================
+// XOR Encryption
+// =====================
+
+const char ENCRYPTION_KEY = 'B'; // يمكن تغييره لأي حرف
+
+/**
+ * @brief Encrypts or Decrypts a string using XOR cipher.
+ *
+ * @param Text The string to encrypt or decrypt.
+ * @return Encrypted or decrypted string.
+ *
+ * @details
+ * XOR is self-inverse — applying it twice returns the original:
+ * Encrypt(Encrypt("1234")) == "1234"
+ * This means the same function handles both encrypt and decrypt.
+ *
+ * @example
+ * XOREncryptDecrypt("1234") → encrypted string
+ * XOREncryptDecrypt(encrypted) → "1234"
+ */
+string XOREncryptDecrypt(string Text)
+{
+    string Result = Text;
+    for (int i = 0; i < Result.length(); i++)
+    {
+        Result[i] = Text[i] ^ ENCRYPTION_KEY;
+    }
+    return Result;
+}
+
+
 // =====================
 // Convert Functions
 // =====================
@@ -145,7 +178,7 @@ stUser ConvertLineToUserRecord(string Line,
     vector<string> vData = SplitString(Line, Separator);
 
     User.UserName = vData[0];
-    User.Password = vData[1];
+    User.Password = XOREncryptDecrypt(vData[1]);
     User.Permissions = stoi(vData[2]);
 
     return User;
@@ -168,7 +201,7 @@ string ConvertUserRecordToLine(stUser User,
 {
     string Line = "";
     Line += User.UserName + Separator;
-    Line += User.Password + Separator;
+    Line += XOREncryptDecrypt(User.Password) + Separator;
     Line += to_string(User.Permissions);
     return Line;
 }
@@ -543,7 +576,7 @@ void PrintUserCard(stUser User)
 {
     cout << "\n-----------------------------------\n";
     cout << "Username    : " << User.UserName << "\n";
-    cout << "Password    : " << User.Password << "\n";
+    cout << "Password    : " << string(User.Password.length(), '*') << "\n";
     cout << "Permissions : " << User.Permissions << "\n";
     cout << "-----------------------------------\n";
 }
@@ -551,7 +584,7 @@ void PrintUserCard(stUser User)
 void PrintUserRecordLine(stUser User)
 {
     cout << "| " << left << setw(15) << User.UserName;
-    cout << "| " << left << setw(10) << User.Password;
+    cout << "| " << left << setw(10) << string(User.Password.length(), '*');
     cout << "| " << left << setw(40) << User.Permissions;
 }
 
